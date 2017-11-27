@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2010-2011 Vanadium Labs LLC. 
+# Copyright (c) 2010-2011 Vanadium Labs LLC.
 # All right reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -11,8 +11,8 @@
 #   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution.
-#   * Neither the name of Vanadium Labs LLC nor the names of its 
-#     contributors may be used to endorse or promote products derived 
+#   * Neither the name of Vanadium Labs LLC nor the names of its
+#     contributors may be used to endorse or promote products derived
 #     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -34,7 +34,7 @@ class Controller:
     ## @brief Constructs a Controller instance.
     ##
     ## @param device The arbotix instance.
-    ## 
+    ##
     ## @param name The controller name.
     def __init__(self, device, name):
         self.name = name
@@ -46,6 +46,7 @@ class Controller:
         self.joint_names = list()
         self.joint_positions = list()
         self.joint_velocities = list()
+        self.joint_efforts = list()
 
     ## @brief Start the controller, do any hardware setup needed.
     def startup(self):
@@ -62,14 +63,13 @@ class Controller:
     ## @brief Is the controller actively sending commands to joints?
     def active(self):
         return False
-        
+
     ## @brief Get a diagnostics message for this joint.
     ##
-    ## @return Diagnostics message. 
+    ## @return Diagnostics message.
     def getDiagnostics(self):
         msg = DiagnosticStatus()
         msg.name = self.name
         msg.level = DiagnosticStatus.OK
         msg.message = "OK"
         return msg
-

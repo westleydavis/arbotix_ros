@@ -11,10 +11,10 @@
       * Redistributions in binary form must reproduce the above copyright
         notice, this list of conditions and the following disclaimer in the
         documentation and/or other materials provided with the distribution.
-      * Neither the name of Vanadium Labs LLC nor the names of its 
-        contributors may be used to endorse or promote products derived 
+      * Neither the name of Vanadium Labs LLC nor the names of its
+        contributors may be used to endorse or promote products derived
         from this software without specific prior written permission.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -40,7 +40,7 @@ class DiagnosticsPublisher:
         self.pub = rospy.Publisher('diagnostics', DiagnosticArray, queue_size=5)
 
     def update(self, joints, controllers):
-        """ Publish diagnostics. """    
+        """ Publish diagnostics. """
         now = rospy.Time.now()
         if now > self.t_next:
             # create message
@@ -57,7 +57,7 @@ class DiagnosticsPublisher:
             # publish and update stats
             self.pub.publish(msg)
             self.t_next = now + self.t_delta
-        
+
 
 class JointStatePublisher:
     """ Class to handle publications of joint_states message. """
@@ -73,20 +73,22 @@ class JointStatePublisher:
 
     def update(self, joints, controllers):
         """ publish joint states. """
-        if rospy.Time.now() > self.t_next:   
+        if rospy.Time.now() > self.t_next:
             msg = JointState()
             msg.header.stamp = rospy.Time.now()
             msg.name = list()
             msg.position = list()
             msg.velocity = list()
+            msg.effort = list()
             for joint in joints:
                 msg.name.append(joint.name)
                 msg.position.append(joint.position)
                 msg.velocity.append(joint.velocity)
+                msg.effort.append(joint.effort)
             for controller in controllers:
                 msg.name += controller.joint_names
                 msg.position += controller.joint_positions
                 msg.velocity += controller.joint_velocities
+                msg.effort += controller.joint_efforts
             self.pub.publish(msg)
             self.t_next = rospy.Time.now() + self.t_delta
-

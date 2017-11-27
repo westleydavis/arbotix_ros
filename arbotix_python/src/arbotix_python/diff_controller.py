@@ -11,10 +11,10 @@
       * Redistributions in binary form must reproduce the above copyright
         notice, this list of conditions and the following disclaimer in the
         documentation and/or other materials provided with the distribution.
-      * Neither the name of Vanadium Labs LLC nor the names of its 
-        contributors may be used to endorse or promote products derived 
+      * Neither the name of Vanadium Labs LLC nor the names of its
+        contributors may be used to endorse or promote products derived
         from this software without specific prior written permission.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -42,7 +42,7 @@ from controllers import *
 from struct import unpack
 
 class DiffController(Controller):
-    """ Controller to handle movement & odometry feedback for a differential 
+    """ Controller to handle movement & odometry feedback for a differential
             drive mobile base. """
     def __init__(self, device, name):
         Controller.__init__(self, device, name)
@@ -74,8 +74,9 @@ class DiffController(Controller):
         self.joint_names = ["base_l_wheel_joint","base_r_wheel_joint"]
         self.joint_positions = [0,0]
         self.joint_velocities = [0,0]
+        self.joint_efforts = [0,0]
 
-        # internal data            
+        # internal data
         self.v_left = 0                 # current setpoint velocity
         self.v_right = 0
         self.v_des_left = 0             # cmd_vel setpoint
@@ -93,13 +94,13 @@ class DiffController(Controller):
         rospy.Subscriber("cmd_vel", Twist, self.cmdVelCb)
         self.odomPub = rospy.Publisher("odom", Odometry, queue_size=5)
         self.odomBroadcaster = TransformBroadcaster()
-		
+
         rospy.loginfo("Started DiffController ("+name+"). Geometry: " + str(self.base_width) + "m wide, " + str(self.ticks_meter) + " ticks/m.")
 
     def startup(self):
         if not self.fake:
-            self.setup(self.Kp,self.Kd,self.Ki,self.Ko) 
-    
+            self.setup(self.Kp,self.Kd,self.Ki,self.Ko)
+
     def update(self):
         now = rospy.Time.now()
         if now > self.t_next:
@@ -147,12 +148,12 @@ class DiffController(Controller):
 
             # publish or perish
             quaternion = Quaternion()
-            quaternion.x = 0.0 
+            quaternion.x = 0.0
             quaternion.y = 0.0
             quaternion.z = sin(self.th/2)
             quaternion.w = cos(self.th/2)
             self.odomBroadcaster.sendTransform(
-                (self.x, self.y, 0), 
+                (self.x, self.y, 0),
                 (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
                 rospy.Time.now(),
                 self.base_frame_id,
@@ -186,7 +187,7 @@ class DiffController(Controller):
                     self.v_left -= self.max_accel
                     if self.v_left < self.v_des_left:
                         self.v_left = self.v_des_left
-                
+
                 if self.v_right < self.v_des_right:
                     self.v_right += self.max_accel
                     if self.v_right > self.v_des_right:
@@ -198,7 +199,7 @@ class DiffController(Controller):
                 self.write(self.v_left, self.v_right)
 
             self.t_next = now + self.t_delta
- 
+
     def shutdown(self):
         if not self.fake:
             self.write(0,0)
@@ -228,15 +229,15 @@ class DiffController(Controller):
         return msg
 
     ###
-    ### Controller Specification: 
+    ### Controller Specification:
     ###
     ###  setup: Kp, Kd, Ki, Ko (all unsigned char)
     ###
     ###  write: left_speed, right_speed (2-byte signed, ticks per frame)
     ###
     ###  status: left_enc, right_enc (4-byte signed)
-    ### 
-    
+    ###
+
     def setup(self, kp, kd, ki, ko):
         success = self.device.execute(253, AX_CONTROL_SETUP, [10, kp, kd, ki, ko])
 
@@ -250,7 +251,7 @@ class DiffController(Controller):
     def status(self):
         """ read 32-bit (signed) encoder values. """
         values = self.device.execute(253, AX_CONTROL_STAT, [10])
-        left_values = "".join([chr(k) for k in values[0:4] ])        
+        left_values = "".join([chr(k) for k in values[0:4] ])
         right_values = "".join([chr(k) for k in values[4:] ])
         try:
             left = unpack('=l',left_values)[0]
@@ -258,4 +259,3 @@ class DiffController(Controller):
             return [left, right]
         except:
             return None
-
