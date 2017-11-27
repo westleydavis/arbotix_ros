@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2010-2011 Vanadium Labs LLC. 
+# Copyright (c) 2010-2011 Vanadium Labs LLC.
 # All right reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -11,8 +11,8 @@
 #   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution.
-#   * Neither the name of Vanadium Labs LLC nor the names of its 
-#     contributors may be used to endorse or promote products derived 
+#   * Neither the name of Vanadium Labs LLC nor the names of its
+#     contributors may be used to endorse or promote products derived
 #     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -34,7 +34,7 @@ class Joint:
     ## @brief Constructs a Joint instance.
     ##
     ## @param device The arbotix instance.
-    ## 
+    ##
     ## @param name The joint name.
     def __init__(self, device, name):
         self.device = device
@@ -43,13 +43,14 @@ class Joint:
 
         self.position = 0.0
         self.velocity = 0.0
+        self.effort = 0.0
         self.last = rospy.Time.now()
 
     ## @brief Get new output, in raw data format.
     ##
     ## @param frame The frame length in seconds to interpolate forward.
     ##
-    ## @return The new output, in raw data format. 
+    ## @return The new output, in raw data format.
     def interpolate(self, frame):
         return None
 
@@ -57,21 +58,30 @@ class Joint:
     ##
     ## @param raw_data The current feedback.
     ##
-    ## @return The current position, in radians/meters. 
+    ## @return The current position, in radians/meters.
     def setCurrentFeedback(self, raw_data):
         return None
 
+    ## @brief Set the current effort from feedback data.
+    ##
+    ## @param raw_data The current feedback.
+    ##
+    ## @return The current effort.
+    def setCurrentEffort(self, raw_data):
+        return None
+
+
     ## @brief Set the goal position.
     ##
-    ## @param position The goal position, in radians/meters. 
+    ## @param position The goal position, in radians/meters.
     ##
-    ## @return The output position, in raw data format. 
+    ## @return The output position, in raw data format.
     def setControlOutput(self, position):
         return None
 
     ## @brief Get a diagnostics message for this joint.
     ##
-    ## @return Diagnostics message. 
+    ## @return Diagnostics message.
     def getDiagnostics(self):
         return None
 
@@ -121,40 +131,39 @@ def getJointsFromURDF():
 def getJointLimits(name, joint_defaults, default_min=-150, default_max=150):
     min_angle = radians(default_min)
     max_angle = radians(default_max)
-    
-    try: 
+
+    try:
         min_angle = joint_defaults[name]['min']
     except:
         pass
-    try: 
+    try:
         min_angle = radians(rospy.get_param("/arbotix/dynamixels/"+name+"/min_angle"))
     except:
         pass
-    try: 
+    try:
         min_angle = radians(rospy.get_param("/arbotix/joints/"+name+"/min_angle"))
     except:
         pass
-    try: 
+    try:
         min_angle = rospy.get_param("/arbotix/joints/"+name+"/min_position")
     except:
         pass
 
-    try: 
+    try:
         max_angle = joint_defaults[name]['max']
     except:
         pass
-    try: 
+    try:
         max_angle = radians(rospy.get_param("/arbotix/dynamixels/"+name+"/max_angle"))
     except:
         pass
-    try: 
+    try:
         max_angle = radians(rospy.get_param("/arbotix/joints/"+name+"/max_angle"))
     except:
         pass
-    try: 
+    try:
         max_angle = rospy.get_param("/arbotix/joints/"+name+"/max_position")
     except:
         pass
 
     return (min_angle, max_angle)
-

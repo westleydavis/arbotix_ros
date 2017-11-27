@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2008-2011 Vanadium Labs LLC. 
+# Copyright (c) 2008-2011 Vanadium Labs LLC.
 # All right reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -11,8 +11,8 @@
 #   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution.
-#   * Neither the name of Vanadium Labs LLC nor the names of its 
-#     contributors may be used to endorse or promote products derived 
+#   * Neither the name of Vanadium Labs LLC nor the names of its
+#     contributors may be used to endorse or promote products derived
 #     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -101,4 +101,3 @@ AX_SYNC_READ = 132
 AX_CONTROL_SETUP = 26
 AX_CONTROL_WRITE = 27
 AX_CONTROL_STAT = 28
-

@@ -310,6 +310,18 @@ class ArbotiX:
         except:
             return -1
 
+    ## @brief Get the effort of a servo.
+    ##
+    ## @param index The ID of the device to read.
+    ##
+    ## @return The servo effort.
+    def getEffort(self, index):
+        values = self.read(index, P_PRESENT_LOAD_L, 2)
+        try:
+            return int(values[0]) + (int(values[1])<<8)
+        except:
+            return -1
+
     ## @brief Get the speed of a servo.
     ##
     ## @param index The ID of the device to read.
